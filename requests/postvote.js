@@ -1,9 +1,9 @@
 async function getVote(user,post){
 
-    const sql = `SELECT * FROM postvotes WHERE user_id='${user}' AND post_id='${post}';`;
+    const sql = `SELECT * FROM postvotes WHERE user_id='${user}' AND post_id=${post};`;
     const promisePool = pool.promise();
     let rows = await promisePool.query(sql);
-    // console.log('vote is :', rows[0][0])
+    console.log('vote is :', rows[0][0])
     return rows[0][0];
 }
 
@@ -28,15 +28,15 @@ async function updateVote(vote_id,vote){
     const promisePool = pool.promise();
     try{
         let rows = await promisePool.query(sql);
-        console.log('creating vote : ',rows)
+        console.log('updating vote : ',rows)
         if(rows && rows[0].affectedRows>0) {
+            console.log('affeeecteeeedd',rows[0].affectedRows)
             return true;
         }else{
-            return false;
+            return false;  
         }
-        
+              
     }catch(err){
-        console.log('...')
         console.log(err)
         return false;
     }

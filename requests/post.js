@@ -149,17 +149,17 @@ const upvote = async (req,res)=>{
         let totalVotesNew;
         if(vote){
             if(vote.vote==-1 || vote.vote==0){
-                voted = await votes.updateVote(vote.post_id,1);
+                voted = await votes.updateVote(vote.vote_id,1);
                 totalVotesNew = vote.vote==0?post.totalVotes+1:post.totalVotes+2; // if from -vote to +vote -> totalVotes +2, if from 0vote to +vote -> totalVotes +1
             }else if(vote.vote==1){ // already upvoted --> remove vote
-                voted = await votes.updateVote(vote.post_id,0);
+                voted = await votes.updateVote(vote.vote_id,0);
                 totalVotesNew = post.totalVotes-1; // remove a +vote -> totalVotes -1
             }
         }else{
             voted = await votes.createVote(user_id,post_id,1);
             totalVotesNew = post.totalVotes+1 // from 0vote to +vote -> totalVotes +1
         }
-
+        console.log('total votes new : ',totalVotesNew)
         if(voted){
             const sql = `UPDATE posts SET totalVotes='${totalVotesNew}' WHERE post_id='${post_id}';`;
             con.query(sql, (err, result) => {
@@ -200,10 +200,10 @@ const downvote = async (req,res)=>{
         let totalVotesNew;
         if(vote){
             if(vote.vote==1 || vote.vote==0){
-                voted = await votes.updateVote(vote.post_id,-1);
+                voted = await votes.updateVote(vote.vote_id,-1);
                 totalVotesNew = vote.vote==0?post.totalVotes-1:post.totalVotes-2; // if from +vote to -vote -> totalVotes -2, if from 0vote to -vote -> totalVotes -1
             }else if(vote.vote==-1){ // already downvoted --> remove vote
-                voted = await votes.updateVote(vote.post_id,0);
+                voted = await votes.updateVote(vote.vote_id,0);
                 totalVotesNew = post.totalVotes+1; // remove a -vote -> totalVotes +1
             }
         }else{
@@ -211,8 +211,9 @@ const downvote = async (req,res)=>{
             totalVotesNew = post.totalVotes-1 // from 0vote to -vote -> totalVotes -1
         }
 
+        console.log('voted is : ',voted)
         if(voted){
-            const sql = `UPDATE replies SET totalVotes='${totalVotesNew}' WHERE post_id='${post_id}';`;
+            const sql = `UPDATE posts SET totalVotes='${totalVotesNew}' WHERE post_id='${post_id}';`;
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
@@ -239,7 +240,7 @@ async function getPostFun(post_id){
     const sql = `SELECT * FROM posts WHERE post_id=${post_id};`;
     const promisePool = pool.promise();
     let rows = await promisePool.query(sql);
-    // console.log('post is :', rows[0][0])
+    console.log('post is :', rows[0][0])
     return rows[0][0];
 }
 

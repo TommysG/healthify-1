@@ -14,8 +14,7 @@ async function createVote(user,reply,vote){
     try{
         let rows = await promisePool.query(sql);
         console.log('creating vote : ',rows)
-        if(rows && rows[0].affectedRows>0) return true;
-        return false;
+        return true;
     }catch(err){
         console.log(err)
         return false;
@@ -28,7 +27,7 @@ async function updateVote(vote_id,vote){
     const promisePool = pool.promise();
     try{
         let rows = await promisePool.query(sql);
-        console.log('creating vote : ',rows)
+        console.log('updating vote : ',rows)
         if(rows && rows[0].affectedRows>0) {
             return true;
         }else{
