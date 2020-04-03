@@ -1,0 +1,16 @@
+{
+    "dev":{
+        "PORT":3000,
+        "DB_NAME" : "healthdb",
+        "DB_USER" : "user",
+        "DB_PASS" : "pass",
+        "DB_HOST" : "127.0.0.1"
+    },
+    "prod":{
+        "PORT":3000,
+        "DB_NAME" : "healthdb",
+        "DB_USER" : "user",
+        "DB_PASS" : "pass",
+        "DB_HOST" : "127.0.0.1"
+    }
+}
