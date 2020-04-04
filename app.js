@@ -3,19 +3,21 @@ const app = express();
 require('./functions/mysql-conn');
 
 let bodyParser = require('body-parser')
-app.use( bodyParser.json() ); 
+app.use( bodyParser.json()); 
+// app.use(express.static(path.join(__dirname, 'files')));
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, ()=>{console.log(`Listening on port ${PORT}`)});
 
-// <----------------- Routing
+
+// <----------------- Imports
 const user = require('./requests/user');
 const post = require('./requests/post');
 const reply = require('./requests/reply');
 
 // ----------------->
 
-// <------------- Endpoints
+// <------------- Routing
 
 // User
 app.get('/api/user/:user', user.getUser);
@@ -23,6 +25,7 @@ app.post('/api/user', user.createUser);
 app.put('/api/user', user.updateUser);
 app.delete('/api/user/:user', user.deleteUser);
 app.get('/api/users', user.getAllUsers);
+app.post('/api/validate', user.validatePwd);
 
 // Post
 app.post('/api/post', post.createPost);

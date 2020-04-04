@@ -1,13 +1,13 @@
 const votes = require('./replyvote');
+const path = require('path');
 
 const createReply = async (req,res)=>{
 
     const user_id = req.body.user_id || null;
     const post_id = req.body.post_id || null;
     const comment = req.body.comment || null;
-    const timestamp = (new Date()).toString();
 
-    const sql = `INSERT INTO replies (user_id,post_id,comment,timestamp) VALUES ('${user_id}','${post_id}','${comment}','${timestamp}');`;
+    const sql = `INSERT INTO replies (user_id,post_id,comment) VALUES ('${user_id}','${post_id}','${comment}');`;
 
     console.log('//////')
     console.log(sql)
@@ -196,6 +196,28 @@ async function getReplyFun(reply_id) {
     // console.log('reply is :', rows[0][0])
     return rows[0][0];
 }
+
+
+// const imagine = (req,res)=>{
+//     var options = {
+//         root: path.join(__dirname, '../files'),
+//         dotfiles: 'deny',
+//         headers: {
+//           'x-timestamp': Date.now(),
+//           'x-sent': true
+//         }
+//       }
+
+//     let img = 'Screenshot_1.png';
+
+//     res.sendFile(img, options, (err)=> {
+//         if (err) {
+//           res.status(400).send(err)
+//         } else {
+//           console.log('Sent:', img)
+//         }
+//       })
+// }
 
 module.exports = {
     createReply,

@@ -5,10 +5,9 @@ const createPost = async (req,res)=>{
     const user_id = req.body.user_id || null;
     const title = req.body.title || null;
     const body = req.body.body || null;
-    const timestamp = (new Date()).toString();
     const category = req.body.category || null;
 
-    const sql = `INSERT INTO posts (user_id,title,body,timestamp,category) VALUES ('${user_id}','${title}','${body}','${timestamp}','${category}');`;
+    const sql = `INSERT INTO posts (user_id,title,body,category) VALUES ('${user_id}','${title}','${body}','${category}');`;
 
     console.log('//////')
     console.log(sql)
@@ -74,7 +73,6 @@ const updatePost= (req,res)=>{
     const title = req.body.title || null;
     const body = req.body.body || null;
     const category = req.body.category || null;
-    // const timestamp = req.body.timestamp || null todo InsertDate & LastUpdate
 
     const sql = `UPDATE posts SET title='${title}', body='${body}', category='${category}' WHERE post_id='${post_id}';`;
     con.query(sql, (err, result) => {

@@ -59,6 +59,7 @@ const deleteUser = (req,res)=>{
             console.log(err);
             res.status(500).send('Error deleting the user');
         }else{
+            console.log(result)
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('User successfully deleted');
@@ -114,10 +115,35 @@ const getAllUsers = (req,res)=>{
       });
 }
 
+const validatePwd = (req,res)=>{
+    const email = req.body.email;
+    const pwd = req.body.pwd;
+    const sql = `SELECT * FROM users WHERE email='${email}';`;
+
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error getting the user');
+        }else{
+            if(result[0]){
+                const user = result[0];
+                if(user.pwd==pwd){
+                    res.status(200).send(true);
+                }else{
+                    res.status(403).send(false);
+                }
+            }else{
+                res.status(404).send('User could not be found');
+            }
+        }
+    });
+}
+
 module.exports = {
     createUser,
     getUser,
     deleteUser,
     updateUser,
-    getAllUsers
+    getAllUsers,
+    validatePwd
 }
