@@ -77,6 +77,7 @@ const deletePost = (req,res)=>{
 // update an existing post's (title, body, category) values
 const updatePost= async (req,res)=>{
 
+    const user_id = req.body.user_id || null;
     const post_id = req.body.post_id || null;
     const title = req.body.title || null;
     const body = req.body.body || null;
@@ -100,6 +101,7 @@ const updatePost= async (req,res)=>{
             }
         });
     }catch(err){
+        console.log(err)
         res.status(400).send(err.details[0].message);
     }
 }
