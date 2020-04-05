@@ -1,9 +1,10 @@
 const mysql = require('mysql2');
+require('dotenv/config');
 
-const DB_NAME = process.env.DB_NAME || 'healthdb';
-const DB_USER = process.env.DB_USER || 'user';
-const DB_PASS = process.env.DB_PASS || 'pass';
-const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_NAME = process.env.DB_NAME;
+const DB_USER = process.env.DB_USER;
+const DB_PASS = process.env.DB_PASS;
+const DB_HOST = process.env.DB_HOST;
 
 const con = mysql.createConnection({
     database: DB_NAME,

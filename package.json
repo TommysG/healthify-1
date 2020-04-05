@@ -4,6 +4,8 @@
   "description": "healthify-be",
   "main": "app.js",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "js-base64": "^2.5.2",
     "mysql2": "^2.1.0",
