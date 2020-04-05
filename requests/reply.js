@@ -1,6 +1,7 @@
 const votes = require('./replyvote');
-const path = require('path');
+// const path = require('path');
 
+// create a new reply
 const createReply = async (req,res)=>{
 
     const user_id = req.body.user_id || null;
@@ -8,9 +9,6 @@ const createReply = async (req,res)=>{
     const comment = req.body.comment || null;
 
     const sql = `INSERT INTO replies (user_id,post_id,comment) VALUES ('${user_id}','${post_id}','${comment}');`;
-
-    console.log('//////')
-    console.log(sql)
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -26,12 +24,11 @@ const createReply = async (req,res)=>{
     });
 }
 
+// get a reply by it's id
 const getReply = async (req,res)=>{
+
     const reply_id = req.params.reply_id || null;
     const sql = `SELECT * FROM replies WHERE reply_id='${reply_id}';`;
-
-    console.log('//////')
-    console.log(sql)
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -47,12 +44,11 @@ const getReply = async (req,res)=>{
       });
 }
 
+// delete a reply 
 const deleteReply = (req,res)=>{
+
     const reply_id = req.params.reply_id || null;
     const sql = `DELETE FROM replies WHERE reply_id='${reply_id}';`;
-
-    console.log('//////')
-    console.log(sql)
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -68,6 +64,7 @@ const deleteReply = (req,res)=>{
     });
 }
 
+// update a reply (comment)
 const updateReply = (req,res)=>{
     
     const reply_id = req.body.reply_id || null;
@@ -86,34 +83,40 @@ const updateReply = (req,res)=>{
                 res.status(400).send('Reply could not be updated');
             }
         }
-      });
+    });
 }
 
+// upvote a reply
 const upvote = async (req,res)=>{
     
     const user_id = req.body.user_id || null;
     const reply_id = req.body.reply_id || null;
-    const reply = await getReplyFun(reply_id);
-    const vote = await votes.getVote(user_id,reply_id);
-    console.log('vote : ',vote)
-    console.log('reply : ',reply)
+    const reply = await getReplyFun(reply_id); // get reply
+    const vote = await votes.getVote(user_id,reply_id); // get user's already existing vote (if there is one) on the reply
+
+    // if reply was found
     if(reply){
         let voted = false;
         let totalVotesNew;
+        //if user has already voted the reply 
         if(vote){
+            // if vote is negative or neutral
             if(vote.vote==-1 || vote.vote==0){
-                voted = await votes.updateVote(vote.vote_id,1);
-                totalVotesNew = vote.vote==0?reply.totalVotes+1:reply.totalVotes+2; // if from -vote to +vote -> totalVotes +2, if from 0vote to +vote -> totalVotes +1
-            }else if(vote.vote==1){ // already upvoted --> remove vote
-                voted = await votes.updateVote(vote.vote_id,0);
-                totalVotesNew = reply.totalVotes-1; // remove a +vote -> totalVotes -1
+                voted = await votes.updateVote(vote.vote_id,1); // update vote to positive
+                totalVotesNew = vote.vote==0?reply.totalVotes+1:reply.totalVotes+2; // if vote was negative add +2 to totalVotes, else if vote was neutral add 1 vote
+            }else if(vote.vote==1){ // already upvoted
+                voted = await votes.updateVote(vote.vote_id,0); // update vote to neutral
+                totalVotesNew = reply.totalVotes-1; // remove a vote from total votes
             }
+        // if user has not already voted the reply
         }else{
-            voted = await votes.createVote(user_id,reply_id,1);
-            totalVotesNew = reply.totalVotes+1 // from 0vote to +vote -> totalVotes +1
+            voted = await votes.createVote(user_id,reply_id,1); // create the vote as positive 
+            totalVotesNew = reply.totalVotes+1 // add positive vote to totalVotes
         }
 
+        // if voted (no errors while creating/updating the user's vote)
         if(voted){
+            // update reply to the new totalVotes
             const sql = `UPDATE replies SET totalVotes='${totalVotesNew}' WHERE reply_id='${reply_id}';`;
             con.query(sql, (err, result) => {
                 if (err) {
@@ -139,32 +142,37 @@ const upvote = async (req,res)=>{
     }
 }
 
+// downvote a reply
 const downvote = async (req,res)=>{
     
     const user_id = req.body.user_id || null;
     const reply_id = req.body.reply_id || null;
-    const reply = await getReplyFun(reply_id);
-    const vote = await votes.getVote(user_id,reply_id);
-    console.log('vote : ',vote)
-    console.log('reply : ',reply)
+    const reply = await getReplyFun(reply_id); // get reply
+    const vote = await votes.getVote(user_id,reply_id); // get user's already existing vote (if there is one) on the reply
 
+    // if reply was found
     if(reply){
         let voted = false;
         let totalVotesNew;
+        //if user has already voted the reply 
         if(vote){
+            // if vote is positive or neutral
             if(vote.vote==1 || vote.vote==0){
-                voted = await votes.updateVote(vote.vote_id,-1);
-                totalVotesNew = vote.vote==0?reply.totalVotes-1:reply.totalVotes-2; // if from +vote to -vote -> totalVotes -2, if from 0vote to -vote -> totalVotes -1
-            }else if(vote.vote==-1){ // already downvoted --> remove vote
-                voted = await votes.updateVote(vote.vote_id,0);
-                totalVotesNew = reply.totalVotes+1; // remove a -vote -> totalVotes +1
+                voted = await votes.updateVote(vote.vote_id,-1); // update vote to negative
+                totalVotesNew = vote.vote==0?reply.totalVotes-1:reply.totalVotes-2; // if vote was positive remove -2 to totalVotes, else if vote was neutral remove 1 vote
+            }else if(vote.vote==-1){ // already downvoted 
+                voted = await votes.updateVote(vote.vote_id,0); // update vote to neutral
+                totalVotesNew = reply.totalVotes+1; // add a vote to total votes
             }
+        // if user has not already voted the reply
         }else{
-            voted = await votes.createVote(user_id,reply_id,-1);
-            totalVotesNew = reply.totalVotes-1 // from 0vote to -vote -> totalVotes -1
+            voted = await votes.createVote(user_id,reply_id,-1); // create the vote as negative 
+            totalVotesNew = reply.totalVotes-1 // add negative vote to totalVotes 
         }
 
+        // if voted (no errors while creating/updating the user's vote)
         if(voted){
+            // update reply to the new totalVotes
             const sql = `UPDATE replies SET totalVotes='${totalVotesNew}' WHERE reply_id='${reply_id}';`;
             con.query(sql, (err, result) => {
                 if (err) {
@@ -188,12 +196,12 @@ const downvote = async (req,res)=>{
     }
 }
 
+// get a reply by it's id
 async function getReplyFun(reply_id) {
 
     const sql = `SELECT * FROM replies WHERE reply_id=${reply_id};`;
     const promisePool = pool.promise();
     let rows = await promisePool.query(sql);
-    // console.log('reply is :', rows[0][0])
     return rows[0][0];
 }
 

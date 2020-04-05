@@ -1,3 +1,4 @@
+// get a user's vote on a certain post
 async function getVote(user,post){
 
     const sql = `SELECT * FROM postvotes WHERE user_id='${user}' AND post_id=${post};`;
@@ -7,6 +8,8 @@ async function getVote(user,post){
     return rows[0][0];
 }
 
+// create a new user vote on a post 
+// vote can be negative (-1), neutral (0) or positive (+1)
 async function createVote(user,post,vote){
 
     const sql = `INSERT INTO postvotes (user_id,post_id,vote) VALUES ('${user}','${post}','${vote}');`;
@@ -22,6 +25,7 @@ async function createVote(user,post,vote){
     }
 }
 
+// update an existing user vote on a post
 async function updateVote(vote_id,vote){
 
     const sql = `UPDATE postvotes SET vote='${vote}' WHERE vote_id='${vote_id}';`;

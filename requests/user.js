@@ -1,6 +1,5 @@
 const userSchema = require('../models/user'); // use to validate user requests
 
-
 // create a new user
 const createUser = async (req,res)=>{
 
