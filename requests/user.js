@@ -92,7 +92,7 @@ const deleteUser = (req,res)=>{
 }
 
 // change a user's existing password
-const changePwd = async (req,res)=>{
+async function changePwd(req,res){
 
     const email = req.body.email || null;
     const oldPwd = req.body.oldPwd || null; // existing password
@@ -132,7 +132,7 @@ const changePwd = async (req,res)=>{
 }
 
 // update a user's username, name, surname, role or avatar
-const updateUser = async (req,res)=>{
+async function updateUser(req,res){
     const email = req.body.email || null;
     const username = req.body.username || null;
     const name = req.body.name || null;
@@ -171,7 +171,7 @@ const updateUser = async (req,res)=>{
 }
 
 // get all users' profiles
-const getAllUsers = (req,res)=>{
+async function getAllUsers(req,res){
 
     const sql = `SELECT * FROM users;`;
     con.query(sql, (err, result) => {
@@ -190,7 +190,7 @@ const getAllUsers = (req,res)=>{
 }
 
 // validate user given password
-const validatePwd = async (req,res)=>{
+async function validatePwd(req,res){
 
     const email = req.body.email;
     const pwd = req.body.pwd;
@@ -243,6 +243,8 @@ async function existingUsername(email,username) {
     }
     return({flag:false})
 }
+
+
 
 module.exports = {
     createUser,

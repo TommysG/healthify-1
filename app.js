@@ -26,6 +26,10 @@ postRoute(app);
 const replyRoute = require('./routing/reply');
 replyRoute(app);
 
+// Poll
+const pollRoute = require('./routing/poll');
+pollRoute(app);
+
 // Forward unhandled requests (no such endpoint exist on the backend)
 app.use('/',(req,res,next)=>{
     res.status(404).send('Page not found!');
