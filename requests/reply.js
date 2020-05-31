@@ -17,7 +17,7 @@ const createReply = async (req,res)=>{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(201).send('Reply successfully created');
-            }else{
+            }else if(result.affectedRows=0){
                 res.status(400).send('Reply could not be created');
             }
         }
@@ -57,7 +57,7 @@ const deleteReply = (req,res)=>{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('Reply successfully deleted');
-            }else{
+            }else if(result.affectedRows=0){
                 res.status(400).send('Reply could not be deleted');
             }
         }
@@ -79,7 +79,7 @@ const updateReply = (req,res)=>{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('Reply successfully updated');
-            }else{
+            }else if(result.affectedRows=0){
                 res.status(400).send('Reply could not be updated');
             }
         }
@@ -126,7 +126,7 @@ const upvote = async (req,res)=>{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Reply successfully upvoted');
-                    }else{
+                    }else if(result.affectedRows=0){
                         console.log('0')
                         res.status(400).send('Reply could not be upvoted');
                     }
@@ -182,7 +182,7 @@ const downvote = async (req,res)=>{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Reply successfully downvoted');
-                    }else{
+                    }else if(result.affectedRows=0){
                         res.status(400).send('Reply could not be downvoted');
                     }
                 }

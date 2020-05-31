@@ -21,7 +21,7 @@ const createPost = async (req,res)=>{
                 if(result.affectedRows>0){
                     console.log("Result: ",result);
                     res.status(201).send('Post successfully created');
-                }else{
+                }else if(result.affectedRows=0){
                     res.status(400).send('Post could not be created');
                 }
             }
@@ -67,7 +67,7 @@ const deletePost = (req,res)=>{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('Post successfully deleted');
-            }else{
+            }else if(result.affectedRows=0){
                 res.status(400).send('Post could not be deleted');
             }
         }
@@ -95,7 +95,7 @@ const updatePost= async (req,res)=>{
                 if(result.affectedRows>0){
                     console.log("Result: ",result);
                     res.status(200).send('Post successfully updated');
-                }else{
+                }else if(result.affectedRows=0){
                     res.status(400).send('Post could not be updated');
                 }
             }
@@ -187,7 +187,7 @@ const upvote = async (req,res)=>{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Post successfully upvoted');
-                    }else{
+                    }else if(result.affectedRows=0){
                         console.log('0')
                         res.status(400).send('Post could not be upvoted');
                     }
@@ -243,7 +243,7 @@ const downvote = async (req,res)=>{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Post successfully downvoted');
-                    }else{
+                    }else if(result.affectedRows=0){
                         res.status(400).send('Post could not be downvoted');
                     }
                 }

@@ -101,7 +101,8 @@ function deletePoll(req,res){
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('poll successfully deleted');
-            }else{
+            }else if(result.affectedRows=0){
+                console.log('returning error')
                 res.status(400).send('poll could not be deleted');
             }
         }
@@ -220,7 +221,7 @@ async function getPollVotes(req,res){
             if(result.length>0){
                 console.log("Result: ",result);
                 res.status(200).send(result);
-            }else{
+            }else if(result.length=0){
                 res.status(404).send('poll could not be found');
             }
         }

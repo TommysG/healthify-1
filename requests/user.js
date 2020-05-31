@@ -32,7 +32,7 @@ const createUser = async (req,res)=>{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(201).send('User successfully created');
-                    }else{
+                    }else if(result.affectedRows=0){
                         res.status(500).send('Internal Server Error. User could not be created');
                     }
                 }
@@ -84,7 +84,7 @@ const deleteUser = (req,res)=>{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('User successfully deleted');
-            }else{
+            }else if(result.affectedRows=0){
                 res.status(400).send('User could not be deleted');
             }
         }
@@ -117,7 +117,7 @@ async function changePwd(req,res){
                 console.log('reply is :', rows)
                 if(rows[0].affectedRows>0){
                     res.send('New password set successfully');
-                }else{
+                }else if(rows[0].affectedRows=0){
                     res.status(500).send('Error setting new password');
                 }
             }else{
@@ -158,7 +158,7 @@ async function updateUser(req,res){
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('User successfully updated');
-                    }else{
+                    }else if(result.affectedRows=0){
                         res.status(400).send('User could not be updated');
                     }
                 }
