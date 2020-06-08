@@ -10,6 +10,7 @@ function route(app) {
     app.post('/api/upvotePost', post.upvote); // upvote a post
     app.post('/api/downvotePost', post.downvote); // downvote a post
     app.get('/api/postsPerCategory', post.getPostsPerCategory); // get all posts per category
+    app.get('/api/posts', post.getPosts); // get all posts 
 }
 
 module.exports = route;

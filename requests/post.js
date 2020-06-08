@@ -288,7 +288,27 @@ const getPostsPerCategory = async (req,res)=>{
                 console.log("Result: ",posts);
                 res.status(200).send(posts);
             }else{
-                res.status(404).send('Post could not be found');
+                res.status(404).send('Posts could not be found');
+            }
+        }
+    });
+}
+
+
+// get all posts 
+const getPosts = async (req,res)=>{
+
+    const sql = `SELECT * FROM posts;`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error getting the posts');
+        }else{
+            console.log(result)
+            if(result){
+                res.status(200).send(result);
+            }else{
+                res.status(404).send('Posts could not be found');
             }
         }
     });
@@ -303,5 +323,6 @@ module.exports = {
     getAllPostReplies,
     getPostsPerCategory,
     upvote,
-    downvote
+    downvote,
+    getPosts
 }
