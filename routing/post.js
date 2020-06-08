@@ -9,6 +9,7 @@ function route(app) {
     app.get('/api/postReplies/:post_id', post.getAllPostReplies); // get all replies under a post
     app.post('/api/upvotePost', post.upvote); // upvote a post
     app.post('/api/downvotePost', post.downvote); // downvote a post
+    app.get('/api/postsPerCategory', post.getPostsPerCategory); // get all posts per category
 }
 
 module.exports = route;

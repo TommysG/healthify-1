@@ -266,6 +266,34 @@ async function getPostFun(post_id){
     return rows[0][0];
 }
 
+// get all posts created grouped by their category
+const getPostsPerCategory = async (req,res)=>{
+
+    const sql = `SELECT * FROM posts;`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error getting the post');
+        }else{
+            console.log(result)
+            if(result){
+                // create empty arrays of all post's categories
+                let posts = {"Men's health":[],"Women's health":[],"Child's health":[],"General":[],"Mental health":[],"Medicines":[]}
+                for(let post of result){
+                    let category = post.category;
+                    if(!posts[category]) posts[category]=[];
+                    // add posts in the category array they fall into
+                    posts[category].push(post);
+                }
+                console.log("Result: ",posts);
+                res.status(200).send(posts);
+            }else{
+                res.status(404).send('Post could not be found');
+            }
+        }
+    });
+}
+
 module.exports = {
     createPost,
     getPost,
@@ -273,6 +301,7 @@ module.exports = {
     updatePost,
     getAllUserPosts,
     getAllPostReplies,
+    getPostsPerCategory,
     upvote,
     downvote
 }

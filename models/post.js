@@ -20,7 +20,6 @@ const postSchema = Joi.object({
     category: Joi.string()
         .min(3)
         .max(50)
-        .valid('article', 'question','other') // enum values [admin, user, doctor]
         .required()
 })
 

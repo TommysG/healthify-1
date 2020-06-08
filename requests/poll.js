@@ -42,15 +42,26 @@ async function createPoll(req,res){
 function getPoll (req,res){
 
     const poll_id = req.params.poll_id;
-    const sql = `SELECT * FROM polls WHERE poll_id='${poll_id}';`;
+    let sql = `SELECT p.poll_id, p.mail, p.poll FROM polls as p WHERE p.poll_id='${poll_id}';`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send('Error getting the poll');
         }else{
             if(result[0]){
+                let poll  = result[0]
+                sql = `SELECT pa.polls_answers_id, pa.answer FROM polls_answers as pa WHERE pa.poll_id='${poll_id}';`;
+                con.query(sql, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send('Error getting the poll');
+                    }else{
+                        poll.answers=result;
+                        res.status(200).send({poll})
+                    }
+                })
                 console.log("Result: ",result[0]);
-                res.status(200).send(result[0]);
+                // res.status(200).send(result[0]);
             }else{
                 res.status(404).send('poll could not be found');
             }
