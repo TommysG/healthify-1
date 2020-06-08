@@ -295,23 +295,29 @@ const getPostsPerCategory = async (req,res)=>{
 }
 
 
-// get all posts 
+// get all posts with the number of replies each one has 
 const getPosts = async (req,res)=>{
-
-    const sql = `SELECT * FROM posts;`;
-    con.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send('Error getting the posts');
-        }else{
-            console.log(result)
-            if(result){
-                res.status(200).send(result);
-            }else{
-                res.status(404).send('Posts could not be found');
+    let sql = `SELECT * FROM posts`;
+    const promisePool = pool.promise();
+    try{
+        let posts = await promisePool.query(sql);
+        if(posts){
+            posts = posts[0]
+            let postsFinal = [];
+            for(let post of posts){
+                let sql = `SELECT COUNT(*) as Count FROM replies WHERE post_id='${post.post_id}';`;
+                postReplies = await promisePool.query(sql);
+                post.repliesNum = postReplies[0][0].Count;
+                postsFinal.push(post)
             }
+            res.status(200).send(postsFinal);
+        }else{
+            res.status(404).send('Posts could not be found');
         }
-    });
+    }catch(err){
+        console.log(err);
+        res.status(500).send('Error getting the posts');
+    }
 }
 
 module.exports = {
