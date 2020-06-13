@@ -12,13 +12,13 @@ const createReply = async (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Reply could not be created');
+            res.status(500).send({error:'Reply could not be created'});
         }else{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(201).send('Reply successfully created');
             }else if(result.affectedRows=0){
-                res.status(400).send('Reply could not be created');
+                res.status(400).send({error:'Reply could not be created'});
             }
         }
     });
@@ -32,13 +32,13 @@ const getReply = async (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the reply');
+            res.status(500).send({error:'Error getting the reply'});
         }else{
             if(result[0]){
                 console.log("Result: ",result[0]);
                 res.status(200).send(result[0]);
             }else{
-                res.status(404).send('Reply could not be found');
+                res.status(404).send({error:'Reply could not be found'});
             }
         }
       });
@@ -52,13 +52,13 @@ const deleteReply = (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error deleting the reply');
+            res.status(500).send({error:'Error deleting the reply'});
         }else{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('Reply successfully deleted');
             }else if(result.affectedRows=0){
-                res.status(400).send('Reply could not be deleted');
+                res.status(400).send({error:'Reply could not be deleted'});
             }
         }
     });
@@ -74,13 +74,13 @@ const updateReply = (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error updating the reply');
+            res.status(500).send({error:'Error updating the reply'});
         }else{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('Reply successfully updated');
             }else if(result.affectedRows=0){
-                res.status(400).send('Reply could not be updated');
+                res.status(400).send({error:'Reply could not be updated'});
             }
         }
     });
@@ -121,24 +121,24 @@ const upvote = async (req,res)=>{
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.status(500).send('Error upvoting the reply');
+                    res.status(500).send({error:'Error upvoting the reply'});
                 }else{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Reply successfully upvoted');
                     }else if(result.affectedRows=0){
                         console.log('0')
-                        res.status(400).send('Reply could not be upvoted');
+                        res.status(400).send({error:'Reply could not be upvoted'});
                     }
                 }
             });
         }else{
             console.log('reply`s vote could not be updated')
-            res.status(400).send('Reply could not be upvoted');
+            res.status(400).send({error:'Reply could not be upvoted'});
         }
     }else{
         console.log('reply not found')
-        res.status(403).send('Reply could not be found');
+        res.status(403).send({error:'Reply could not be found'});
     }
 }
 
@@ -177,22 +177,22 @@ const downvote = async (req,res)=>{
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.status(500).send('Error downvoting the reply');
+                    res.status(500).send({error:'Error downvoting the reply'});
                 }else{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Reply successfully downvoted');
                     }else if(result.affectedRows=0){
-                        res.status(400).send('Reply could not be downvoted');
+                        res.status(400).send({error:'Reply could not be downvoted'});
                     }
                 }
             });
         }else{
             console.log('reply`s vote could not be updated')
-            res.status(400).send('Reply could not be downvoted');
+            res.status(400).send({error:'Reply could not be downvoted'});
         }
     }else{
-        res.status(404).send('Reply could not be found');
+        res.status(404).send({error:'Reply could not be found'});
     }
 }
 

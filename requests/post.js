@@ -16,19 +16,19 @@ const createPost = async (req,res)=>{
         con.query(sql, (err, result) => {
             if (err) {
                 console.log(err);
-                res.status(500).send('Post could not be created');
+                res.status(500).send({error:'Post could not be created'});
             }else{
                 if(result.affectedRows>0){
                     console.log("Result: ",result);
                     res.status(201).send('Post successfully created');
                 }else if(result.affectedRows=0){
-                    res.status(400).send('Post could not be created');
+                    res.status(400).send({error:'Post could not be created'});
                 }
             }
         });
     }catch(err){
         console.log(err)
-        res.status(400).send(err.details[0].message);
+        res.status(400).send({error:err.details[0].message});
     }
 }
 
@@ -41,13 +41,13 @@ const getPost = async (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the post');
+            res.status(500).send({error:'Error getting the post'});
         }else{
             if(result[0]){
                 console.log("Result: ",result[0]);
                 res.status(200).send(result[0]);
             }else{
-                res.status(404).send('Post could not be found');
+                res.status(404).send({error:'Post could not be found'});
             }
         }
       });
@@ -62,13 +62,13 @@ const deletePost = (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error deleting the post');
+            res.status(500).send({error:'Error deleting the post'});
         }else{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('Post successfully deleted');
             }else if(result.affectedRows=0){
-                res.status(400).send('Post could not be deleted');
+                res.status(400).send({error:'Post could not be deleted'});
             }
         }
     });
@@ -90,19 +90,19 @@ const updatePost= async (req,res)=>{
         con.query(sql, (err, result) => {
             if (err) {
                 console.log(err);
-                res.status(500).send('Error updating the post');
+                res.status(500).send({error:'Error updating the post'});
             }else{
                 if(result.affectedRows>0){
                     console.log("Result: ",result);
                     res.status(200).send('Post successfully updated');
                 }else if(result.affectedRows=0){
-                    res.status(400).send('Post could not be updated');
+                    res.status(400).send({error:'Post could not be updated'});
                 }
             }
         });
     }catch(err){
         console.log(err)
-        res.status(400).send(err.details[0].message);
+        res.status(400).send({error:err.details[0].message});
     }
 }
 
@@ -115,13 +115,13 @@ const getAllUserPosts = (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send(`Error getting the user's posts`);
+            res.status(500).send({error:`Error getting the user's posts`});
         }else{
             if(result[0]){
                 console.log("Result: ",result);
                 res.status(200).send(result);
             }else{
-                res.status(404).send(`No User's posts were found`);
+                res.status(404).send({error:`No User's posts were found`});
             }
         }
     });
@@ -136,13 +136,13 @@ const getAllPostReplies = (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send(`Error getting the post's replies`);
+            res.status(500).send({error:`Error getting the post's replies`});
         }else{
             if(result[0]){
                 console.log("Result: ",result);
                 res.status(200).send(result);
             }else{
-                res.status(404).send(`Post's replies could not be found`);
+                res.status(404).send({error:`Post's replies could not be found`});
             }
         }
     });
@@ -182,24 +182,24 @@ const upvote = async (req,res)=>{
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.status(500).send('Error upvoting the post');
+                    res.status(500).send({error:'Error upvoting the post'});
                 }else{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Post successfully upvoted');
                     }else if(result.affectedRows=0){
                         console.log('0')
-                        res.status(400).send('Post could not be upvoted');
+                        res.status(400).send({error:'Post could not be upvoted'});
                     }
                 }
             });
         }else{
             console.log('Post`s vote could not be updated')
-            res.status(400).send('Post could not be upvoted');
+            res.status(400).send({error:'Post could not be upvoted'});
         }
     }else{
         console.log('Post not found')
-        res.status(403).send('Post could not be found');
+        res.status(403).send({error:'Post could not be found'});
     }
 }
 
@@ -238,22 +238,22 @@ const downvote = async (req,res)=>{
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.status(500).send('Error downvoting the post');
+                    res.status(500).send({error:'Error downvoting the post'});
                 }else{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('Post successfully downvoted');
                     }else if(result.affectedRows=0){
-                        res.status(400).send('Post could not be downvoted');
+                        res.status(400).send({error:'Post could not be downvoted'});
                     }
                 }
             });
         }else{
             console.log('Post`s vote could not be updated')
-            res.status(400).send('Post could not be downvoted');
+            res.status(400).send({error:'Post could not be downvoted'});
         }
     }else{
-        res.status(404).send('Post could not be found');
+        res.status(404).send({error:'Post could not be found'});
     }
 }
 
@@ -267,28 +267,26 @@ async function getPostFun(post_id){
 }
 
 // get all posts created grouped by their category
-const getPostsPerCategory = async (req,res)=>{
+const getPostsCountPerCategory = async (req,res)=>{
 
-    const sql = `SELECT * FROM posts;`;
+    const sql = `SELECT sum(case when p.category = 'Men''s health' then 1 else 0 end) as mensHealthCount,
+    sum(case when p.category='Women''s health' then 1 else 0 end) as womensHealthCount, 
+    sum(case when p.category='Child''s health' then 1 else 0 end) as childsHealthCount, 
+    sum(case when p.category='General' then 1 else 0 end) as generalCount, 
+    sum(case when p.category='Mental health' then 1 else 0 end) as mentalHealthCount, 
+    sum(case when p.category='Medicines' then 1 else 0 end) as medicinesHealthCount
+    FROM posts p`
+
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the post');
+            res.status(500).send({error:'Error getting the post'});
         }else{
             console.log(result)
             if(result){
-                // create empty arrays of all post's categories
-                let posts = {"Men's health":[],"Women's health":[],"Child's health":[],"General":[],"Mental health":[],"Medicines":[]}
-                for(let post of result){
-                    let category = post.category;
-                    if(!posts[category]) posts[category]=[];
-                    // add posts in the category array they fall into
-                    posts[category].push(post);
-                }
-                console.log("Result: ",posts);
-                res.status(200).send(posts);
+                res.status(200).send(result[0]);
             }else{
-                res.status(404).send('Posts could not be found');
+                res.status(404).send({error:'Posts could not be found'});
             }
         }
     });
@@ -312,11 +310,84 @@ const getPosts = async (req,res)=>{
             }
             res.status(200).send(postsFinal);
         }else{
-            res.status(404).send('Posts could not be found');
+            res.status(404).send({error:'Posts could not be found'});
         }
     }catch(err){
         console.log(err);
-        res.status(500).send('Error getting the posts');
+        res.status(500).send({error:'Error getting the posts'});
+    }
+}
+
+// get all posts of a given category
+const getPostsPerCategory = async (req,res)=>{
+    const category = await postCategoryByCode(req.query.category);
+    let sql = `SELECT * FROM posts WHERE category like '${category}%'`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({error:'Error getting the post'});
+        }else{
+            console.log(result)
+            if(result){
+                res.status(200).send(result);
+            }else{
+                res.status(404).send({error:'Posts could not be found'});
+            }
+        }
+    });
+}
+
+
+// get all votes of a user per post 
+const getUserPostsVotes = async (req,res)=>{
+    let sql = `SELECT * FROM postvotes WHERE user_id='${req.params.user_id}'`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({error:'Error getting the post'});
+        }else{
+            console.log(result)
+            if(result){
+                res.status(200).send(result);
+            }else{
+                res.status(404).send({error:'Posts could not be found'});
+            }
+        }
+    });
+}
+
+// get all replies' votes of a user per post 
+const getUserPostVotes = async (req,res)=>{
+    let sql = `SELECT rv.reply_id, rv.user_id, rv.reply_id, rv.vote FROM replyvotes rv JOIN replies r ON rv.reply_id = r.reply_id  WHERE rv.user_id='${req.query.user_id}' AND r.post_id='${req.query.post_id}'`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({error:'Error getting the post'});
+        }else{
+            console.log(result)
+            if(result){
+                res.status(200).send(result);
+            }else{
+                res.status(404).send({error:'Posts could not be found'});
+            }
+        }
+    });
+}
+
+function postCategoryByCode(code) {
+    switch(parseInt(code)){
+        case 0:
+            return `Men`;
+        case 1:
+            return `Women`;
+        case 3:
+            return `Child`;
+        case 4:
+            return `General`;
+        case 5:
+            return `Mental`;
+        case 6:
+            return `Medicine`;
     }
 }
 
@@ -327,8 +398,11 @@ module.exports = {
     updatePost,
     getAllUserPosts,
     getAllPostReplies,
+    getPostsCountPerCategory,
     getPostsPerCategory,
     upvote,
     downvote,
-    getPosts
+    getPosts,
+    getUserPostsVotes,
+    getUserPostVotes
 }

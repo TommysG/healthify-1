@@ -17,7 +17,7 @@ const createUser = async (req,res)=>{
     const existingMailUN = await checkExisting(email,username);
     // if so, send appropriate message to the user 
     if(existingMailUN.flag){
-        res.status(400).send(existingMailUN.message);
+        res.status(400).send({error:existingMailUN.message});
     }else{
         try {
             // validate structure of email, username, password, repeatPwd and role
@@ -27,13 +27,13 @@ const createUser = async (req,res)=>{
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.status(500).send('Internal Server Error. User could not be created');
+                    res.status(500).send({error:'Internal Server Error. User could not be created'});
                 }else{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(201).send('User successfully created');
                     }else if(result.affectedRows=0){
-                        res.status(500).send('Internal Server Error. User could not be created');
+                        res.status(500).send({error:'Internal Server Error. User could not be created'});
                     }
                 }
             });
@@ -41,11 +41,11 @@ const createUser = async (req,res)=>{
         catch (err) { 
             // validator will throw an error if password and repeat-password do not exist or exist and do not match 
             if(pwd && repeatPwd && pwd!==repeatPwd){
-                res.status(400).send('Passwords do not match')
+                res.status(400).send({error:'Passwords do not match'})
             }
             console.log(err)
             // other error thrown by the validator
-            res.status(400).send(err.details[0].message);
+            res.status(400).send({error:err.details[0].message});
         }
     }
 }
@@ -58,13 +58,13 @@ const getUser = async (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the user');
+            res.status(500).send({error:'Error getting the user'});
         }else{
             if(result[0]){
                 console.log("Result: ",result[0]);
                 res.status(200).send(result[0]);
             }else{
-                res.status(404).send('User could not be found');
+                res.status(404).send({error:'User could not be found'});
             }
         }
     });
@@ -78,14 +78,14 @@ const deleteUser = (req,res)=>{
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error deleting the user');
+            res.status(500).send({error:'Error deleting the user'});
         }else{
             console.log(result)
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('User successfully deleted');
             }else if(result.affectedRows=0){
-                res.status(400).send('User could not be deleted');
+                res.status(400).send({error:'User could not be deleted'});
             }
         }
     });
@@ -118,16 +118,16 @@ async function changePwd(req,res){
                 if(rows[0].affectedRows>0){
                     res.send('New password set successfully');
                 }else if(rows[0].affectedRows=0){
-                    res.status(500).send('Error setting new password');
+                    res.status(500).send({error:'Error setting new password'});
                 }
             }else{
-                res.status(400).send('New passwords do not match');
+                res.status(400).send({error:'New passwords do not match'});
             }
         }else{
-            res.status(400).send('Invalid current password');
+            res.status(400).send({error:'Invalid current password'});
         }
     }else{
-        res.status(400).send('User could not be found');
+        res.status(400).send({error:'User could not be found'});
     }
 }
 
@@ -143,7 +143,7 @@ async function updateUser(req,res){
     // check if another user with given username exist (username must be unique)
     const existingMailUN = await existingUsername(email,username);
     if(existingMailUN.flag){
-        res.status(400).send(existingMailUN.message);
+        res.status(400).send({error:existingMailUN.message});
     }else{
         try {
             // validate user schema 
@@ -153,19 +153,19 @@ async function updateUser(req,res){
             con.query(sql, (err, result) => {
                 if (err) {
                     console.log(err);
-                    res.status(500).send('Error updating the user');
+                    res.status(500).send({error:'Error updating the user'});
                 }else{
                     if(result.affectedRows>0){
                         console.log("Result: ",result);
                         res.status(200).send('User successfully updated');
                     }else if(result.affectedRows=0){
-                        res.status(400).send('User could not be updated');
+                        res.status(400).send({error:'User could not be updated'});
                     }
                 }
             });
         }catch(err){
             console.log(err)
-            res.status(400).send(err.details[0].message);
+            res.status(400).send({error:err.details[0].message});
         }
     }
 }
@@ -177,13 +177,13 @@ async function getAllUsers(req,res){
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the users data');
+            res.status(500).send({error:'Error getting the users data'});
         }else{
             if(result[0]){
                 console.log("Result: ",result);
                 res.status(200).send(result);
             }else{
-                res.status(404).send('Users data could not be found');
+                res.status(404).send({error:'Users data could not be found'});
             }
         }
       });
@@ -203,12 +203,12 @@ async function validatePwd(req,res){
     if(rows[0][0]){
         let user = rows[0][0];
         if(user.pwd==pwd){
-            res.send('success validating user');
+            res.send(user);
         }else{
-            res.status(403).send('Invalid password');
+            res.status(403).send({error:'Invalid password'});
         }
     }else{
-        res.status(404).send('User not found');
+        res.status(404).send({error:'User not found'});
     }
 }
 

@@ -8,7 +8,7 @@ async function createPoll(req,res){
     const answers = req.body.answers || [];
 
     if(poll==null||mail==null){
-        res.status(400).send('Invalid input');
+        res.status(400).send({error:'Invalid input'});
     }else{
         try {
             // create poll
@@ -25,13 +25,13 @@ async function createPoll(req,res){
                 }
                 res.send('Poll created successfully');
             }else{
-                res.status(400).send('Poll could not be created');
+                res.status(400).send({error:'Poll could not be created'});
             }
         }
         catch (err) { 
             console.log(err)
             // other error thrown by the validator
-            res.status(400).send('Poll could not be created');
+            res.status(400).send({error:'Poll could not be created'});
         }
 
     }
@@ -46,7 +46,7 @@ function getPoll (req,res){
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the poll');
+            res.status(500).send({error:'Error getting the poll'});
         }else{
             if(result[0]){
                 let poll  = result[0]
@@ -54,7 +54,7 @@ function getPoll (req,res){
                 con.query(sql, (err, result) => {
                     if (err) {
                         console.log(err);
-                        res.status(500).send('Error getting the poll');
+                        res.status(500).send({error:'Error getting the poll'});
                     }else{
                         poll.answers=result;
                         res.status(200).send({poll})
@@ -63,7 +63,7 @@ function getPoll (req,res){
                 console.log("Result: ",result[0]);
                 // res.status(200).send(result[0]);
             }else{
-                res.status(404).send('poll could not be found');
+                res.status(404).send({error:'poll could not be found'});
             }
         }
     });
@@ -77,7 +77,7 @@ async function updatePoll(req,res){
     const poll_id = req.body.poll_id || null;
 
     if(!poll_id||!poll||!answers){
-        res.status(400).send('Invalid input');
+        res.status(400).send({error:'Invalid input'});
     }else{
         try {
             let sql = `UPDATE polls SET poll='${poll}' WHERE poll_id='${poll_id}';`;
@@ -93,7 +93,7 @@ async function updatePoll(req,res){
             }
         }catch(err){
             console.log(err)
-            res.status(400).send('Poll could not be updated');
+            res.status(400).send({error:'Poll could not be updated'});
         }
     }
 }
@@ -107,14 +107,14 @@ function deletePoll(req,res){
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error deleting the poll');
+            res.status(500).send({error:'Error deleting the poll'});
         }else{
             if(result.affectedRows>0){
                 console.log("Result: ",result);
                 res.status(200).send('poll successfully deleted');
             }else if(result.affectedRows=0){
                 console.log('returning error')
-                res.status(400).send('poll could not be deleted');
+                res.status(400).send({error:'poll could not be deleted'});
             }
         }
     });
@@ -129,14 +129,14 @@ async function getAllUserPolls(req,res){
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the users polls');
+            res.status(500).send({error:'Error getting the users polls'});
         }else{
             console.log('result : ',result)
             if(result[0]){
                 console.log("Result: ",result);
                 res.status(200).send(result);
             }else{
-                res.status(404).send('Users polls could not be found');
+                res.status(404).send({error:'Users polls could not be found'});
             }
         }
     });
@@ -149,13 +149,13 @@ async function getAllPolls (req,res){
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the polls');
+            res.status(500).send({error:'Error getting the polls'});
         }else{
             if(result[0]){
                 console.log("Result: ",result);
                 res.status(200).send(result);
             }else{
-                res.status(404).send('polls could not be found');
+                res.status(404).send({error:'polls could not be found'});
             }
         }
     });
@@ -169,7 +169,7 @@ async function vote(req,res){
     const polls_answers_id = req.body.polls_answers_id || null;
 
     if(!poll_id||!username||!polls_answers_id){
-        res.status(400).send('invalid input')
+        res.status(400).send({error:'invalid input'})
     }else{
         try {
             let voted = await hasVoted(req);
@@ -180,14 +180,14 @@ async function vote(req,res){
                 if(updated){
                     res.send('Poll successfully voted')
                 }else{
-                    res.status(400).send('Poll could not be voted');
+                    res.status(400).send({error:'Poll could not be voted'});
                 }
             }else{
-                res.status(400).send('User has already voted');
+                res.status(400).send({error:'User has already voted'});
             }
         }catch(err){
             console.log(err)
-            res.status(400).send('Poll could not be voted');
+            res.status(400).send({error:'Poll could not be voted'});
         }
     }
 }
@@ -209,11 +209,11 @@ async function getUserVote(req,res){
             if(anser){
                 res.send(anser)
             }else{
-                res.status(404).send('User has not voted')
+                res.status(404).send({error:'User has not voted'})
             }
         }catch(err){
             console.log(err)
-            res.status(400).send('Poll could not be voted');
+            res.status(400).send({error:'Poll could not be voted'});
         }
     }
 }
@@ -227,13 +227,13 @@ async function getPollVotes(req,res){
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Error getting the poll');
+            res.status(500).send({error:'Error getting the poll'});
         }else{
             if(result.length>0){
                 console.log("Result: ",result);
                 res.status(200).send(result);
             }else if(result.length=0){
-                res.status(404).send('poll could not be found');
+                res.status(404).send({error:'poll could not be found'});
             }
         }
     });
