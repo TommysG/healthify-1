@@ -320,7 +320,7 @@ const getPosts = async (req,res)=>{
 
 // get all posts of a given category
 const getPostsPerCategory = async (req,res)=>{
-    const category = await postCategoryByCode(req.query.category);
+    const category = await postCategoryByCode(req.params.category);
     let sql = `SELECT * FROM posts WHERE category like '${category}%'`;
     con.query(sql, (err, result) => {
         if (err) {
