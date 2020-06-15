@@ -205,28 +205,6 @@ async function getReplyFun(reply_id) {
     return rows[0][0];
 }
 
-
-// const imagine = (req,res)=>{
-//     var options = {
-//         root: path.join(__dirname, '../files'),
-//         dotfiles: 'deny',
-//         headers: {
-//           'x-timestamp': Date.now(),
-//           'x-sent': true
-//         }
-//       }
-
-//     let img = 'Screenshot_1.png';
-
-//     res.sendFile(img, options, (err)=> {
-//         if (err) {
-//           res.status(400).send(err)
-//         } else {
-//           console.log('Sent:', img)
-//         }
-//       })
-// }
-
 module.exports = {
     createReply,
     getReply,

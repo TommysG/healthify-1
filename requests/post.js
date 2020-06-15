@@ -113,7 +113,7 @@ const getAllUserPosts = (req,res)=>{
 
     const user_id = req.params.user_id || null;
 
-    const sql = `SELECT * FROM posts WHERE user_id='${user_id}';`;
+    const sql = `SELECT * FROM posts WHERE user_id='${user_id}' ORDER BY createdAt;`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -134,7 +134,7 @@ const getAllPostReplies = async (req,res)=>{
 
     const post_id = req.params.post_id;
 
-    const sql = `SELECT * FROM replies WHERE post_id='${post_id}';`;
+    const sql = `SELECT * FROM replies WHERE post_id='${post_id}' ORDER BY createdAt;`;
     const promisePool = pool.promise();
 
     try{
@@ -306,7 +306,7 @@ const getPostsCountPerCategory = async (req,res)=>{
 
 // get all posts with the number of replies each one has 
 const getPosts = async (req,res)=>{
-    let sql = `SELECT * FROM posts`;
+    let sql = `SELECT * FROM posts ORDER BY createdAt`;
     const promisePool = pool.promise();
     try{
         let posts = await promisePool.query(sql);
@@ -333,7 +333,7 @@ const getPosts = async (req,res)=>{
 const getPostsPerCategory = async (req,res)=>{
     const category = await postCategoryByCode(req.params.category);
     const promisePool = pool.promise();
-    let sql = `SELECT * FROM posts WHERE category like '${category}%'`;
+    let sql = `SELECT * FROM posts WHERE category like '${category}%' ORDER BY createdAt`;
 
     try{
         let posts = await promisePool.query(sql);
@@ -357,7 +357,7 @@ const getPostsPerCategory = async (req,res)=>{
 }
 
 
-// get all votes of a user per post 
+// get all of a user's votes per post 
 const getUserPostsVotes = async (req,res)=>{
     let sql = `SELECT * FROM postvotes WHERE user_id='${req.params.user_id}'`;
     con.query(sql, (err, result) => {
@@ -375,7 +375,7 @@ const getUserPostsVotes = async (req,res)=>{
     });
 }
 
-// get all replies' votes of a user per post 
+// get all of a post replies that a user has voted
 const getUserPostVotes = async (req,res)=>{
     let sql = `SELECT rv.reply_id, rv.user_id, rv.reply_id, rv.vote FROM replyvotes rv JOIN replies r ON rv.reply_id = r.reply_id  WHERE rv.user_id='${req.query.user_id}' AND r.post_id='${req.query.post_id}'`;
     con.query(sql, (err, result) => {
