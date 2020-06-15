@@ -128,24 +128,32 @@ const getAllUserPosts = (req,res)=>{
 }
 
 // get all replies made on a certain post
-const getAllPostReplies = (req,res)=>{
+const getAllPostReplies = async (req,res)=>{
 
     const post_id = req.params.post_id;
 
     const sql = `SELECT * FROM replies WHERE post_id='${post_id}';`;
-    con.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({error:`Error getting the post's replies`});
-        }else{
-            if(result[0]){
-                console.log("Result: ",result);
-                res.status(200).send(result);
-            }else{
-                res.status(404).send({error:`Post's replies could not be found`});
+    const promisePool = pool.promise();
+
+    try{
+        let replies = await promisePool.query(sql);
+        if(replies){
+            replies = replies[0]
+            let repliesFinal = [];
+            for(let reply of replies){
+                let sql = `SELECT COUNT(*) as Count FROM replyvotes WHERE reply_id='${reply.reply_id}';`;
+                repliesVotes = await promisePool.query(sql);
+                reply.votes = repliesVotes[0][0].Count;
+                repliesFinal.push(reply)
             }
+            res.status(200).send(repliesFinal)
+        }else{
+            res.status(404).send({error:`Post's replies could not be found`});
         }
-    });
+    }catch(err){
+        console.log(err)
+        res.status(500).send({error:`Error getting the post's replies`});
+    }
 }
 
 // upvote a post
