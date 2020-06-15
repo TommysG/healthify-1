@@ -6,7 +6,7 @@ async function createPoll(req,res){
     const poll = req.body.poll || null;
     const mail = req.body.mail || null;
     const answers = req.body.answers || [];
-    const active = req.body.isActive;
+    const active = req.body.isActive || false;
 
     if(poll==null||mail==null){
         res.status(400).send({error:'Invalid input'});
@@ -76,7 +76,7 @@ async function updatePoll(req,res){
     const poll = req.body.poll || null;
     const answers = req.body.answers || [];
     const poll_id = req.body.poll_id || null;
-    const active = req.body.isActive;
+    const active = req.body.isActive || false;
 
     if(!poll_id||!poll||!answers){
         res.status(400).send({error:'Invalid input'});
