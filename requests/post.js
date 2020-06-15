@@ -329,20 +329,28 @@ const getPosts = async (req,res)=>{
 // get all posts of a given category
 const getPostsPerCategory = async (req,res)=>{
     const category = await postCategoryByCode(req.params.category);
+    const promisePool = pool.promise();
     let sql = `SELECT * FROM posts WHERE category like '${category}%'`;
-    con.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({error:'Error getting the post'});
-        }else{
-            console.log(result)
-            if(result){
-                res.status(200).send(result);
-            }else{
-                res.status(404).send({error:'Posts could not be found'});
+
+    try{
+        let posts = await promisePool.query(sql);
+        if(posts){
+            posts = posts[0]
+            let postsFinal = [];
+            for(let post of posts){
+                let sql = `SELECT COUNT(*) as Count FROM replies WHERE post_id='${post.post_id}';`;
+                postReplies = await promisePool.query(sql);
+                post.repliesNum = postReplies[0][0].Count;
+                postsFinal.push(post)
             }
+            res.status(200).send(postsFinal);
+        }else{
+            res.status(404).send({error:'Posts could not be found'});
         }
-    });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({error:'Error getting the posts'});
+    }
 }
 
 
