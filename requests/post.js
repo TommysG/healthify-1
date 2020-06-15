@@ -113,7 +113,7 @@ const getAllUserPosts = (req,res)=>{
 
     const user_id = req.params.user_id || null;
 
-    const sql = `SELECT * FROM posts WHERE user_id='${user_id}' ORDER BY createdAt;`;
+    const sql = `SELECT * FROM posts WHERE user_id='${user_id}' ORDER BY createdAt DESC;`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -134,7 +134,7 @@ const getAllPostReplies = async (req,res)=>{
 
     const post_id = req.params.post_id;
 
-    const sql = `SELECT * FROM replies WHERE post_id='${post_id}' ORDER BY createdAt;`;
+    const sql = `SELECT * FROM replies WHERE post_id='${post_id}' ORDER BY createdAt DESC;`;
     const promisePool = pool.promise();
 
     try{
@@ -306,7 +306,7 @@ const getPostsCountPerCategory = async (req,res)=>{
 
 // get all posts with the number of replies each one has 
 const getPosts = async (req,res)=>{
-    let sql = `SELECT * FROM posts ORDER BY createdAt`;
+    let sql = `SELECT * FROM posts ORDER BY createdAt DESC`;
     const promisePool = pool.promise();
     try{
         let posts = await promisePool.query(sql);
@@ -333,7 +333,7 @@ const getPosts = async (req,res)=>{
 const getPostsPerCategory = async (req,res)=>{
     const category = await postCategoryByCode(req.params.category);
     const promisePool = pool.promise();
-    let sql = `SELECT * FROM posts WHERE category like '${category}%' ORDER BY createdAt`;
+    let sql = `SELECT * FROM posts WHERE category like '${category}%' ORDER BY createdAt DESC`;
 
     try{
         let posts = await promisePool.query(sql);
