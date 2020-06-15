@@ -219,7 +219,7 @@ async function getUserVote(req,res){
     const poll_id = req.body.poll_id || null;
     const username = req.body.username || null;
 
-    if(!poll_id||!username){
+    if((!poll_id&&!poll_id===0)||!username){
         res.status(400).send('invalid input')
     }else{
         try {

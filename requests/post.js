@@ -141,14 +141,14 @@ const getAllPostReplies = async (req,res)=>{
         let replies = await promisePool.query(sql);
         if(replies){
             replies = replies[0]
-            let repliesFinal = [];
-            for(let reply of replies){
-                let sql = `SELECT COUNT(*) as Count FROM replyvotes WHERE reply_id='${reply.reply_id}';`;
-                repliesVotes = await promisePool.query(sql);
-                reply.votes = repliesVotes[0][0].Count;
-                repliesFinal.push(reply)
-            }
-            res.status(200).send(repliesFinal)
+            // let repliesFinal = [];
+            // for(let reply of replies){
+            //     let sql = `SELECT COUNT(*) as Count FROM replyvotes WHERE reply_id='${reply.reply_id}';`;
+            //     repliesVotes = await promisePool.query(sql);
+            //     reply.votes = repliesVotes[0][0].Count;
+            //     repliesFinal.push(reply)
+            // }
+            res.status(200).send(replies)
         }else{
             res.status(404).send({error:`Post's replies could not be found`});
         }
