@@ -282,7 +282,8 @@ const getPostsCountPerCategory = async (req,res)=>{
     sum(case when p.category='Child''s health' then 1 else 0 end) as childsHealthCount, 
     sum(case when p.category='General' then 1 else 0 end) as generalCount, 
     sum(case when p.category='Mental health' then 1 else 0 end) as mentalHealthCount, 
-    sum(case when p.category='Medicines' then 1 else 0 end) as medicinesHealthCount
+    sum(case when p.category='Medicines' then 1 else 0 end) as medicinesHealthCount,
+    sum(case when p.category='News' then 1 else 0 end) as newsHealthCount,
     FROM posts p`
 
     con.query(sql, (err, result) => {
@@ -396,14 +397,16 @@ function postCategoryByCode(code) {
             return `Men`;
         case 1:
             return `Women`;
-        case 3:
+        case 2:
             return `Child`;
-        case 4:
+        case 3:
             return `General`;
-        case 5:
+        case 4:
             return `Mental`;
-        case 6:
+        case 5:
             return `Medicine`;
+        case 6:
+            return `News`;
     }
 }
 
