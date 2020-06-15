@@ -8,11 +8,12 @@ const createPost = async (req,res)=>{
     const title = req.body.title || null;
     const body = req.body.body || null;
     const category = req.body.category || null;
+    const imgUrl = req.body.imgUrl || null;
 
     try {
         // validate structure of email, username, password, repeatPwd and role
         await postSchema.postSchema.validateAsync({ user_id,title,body,category});
-        const sql = `INSERT INTO posts (user_id,title,body,category) VALUES ('${user_id}','${title}','${body}','${category}');`;
+        const sql = `INSERT INTO posts (user_id,title,body,category,imgUrl) VALUES ('${user_id}','${title}','${body}','${category}','${imgUrl}');`;
         con.query(sql, (err, result) => {
             if (err) {
                 console.log(err);
@@ -82,11 +83,12 @@ const updatePost= async (req,res)=>{
     const title = req.body.title || null;
     const body = req.body.body || null;
     const category = req.body.category || null;
+    const imgUrl = req.body.imgUrl || null;
 
     try {
         // validate structure of email, username, password, repeatPwd and role
         await postSchema.postSchema.validateAsync({ user_id,title,body,category});
-        const sql = `UPDATE posts SET title='${title}', body='${body}', category='${category}' WHERE post_id='${post_id}';`;
+        const sql = `UPDATE posts SET title='${title}', body='${body}', category='${category}', imgUrl='${imgUrl}' WHERE post_id='${post_id}';`;
         con.query(sql, (err, result) => {
             if (err) {
                 console.log(err);
