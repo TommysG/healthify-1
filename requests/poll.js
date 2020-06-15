@@ -6,13 +6,14 @@ async function createPoll(req,res){
     const poll = req.body.poll || null;
     const mail = req.body.mail || null;
     const answers = req.body.answers || [];
+    const active = req.body.isActive;
 
     if(poll==null||mail==null){
         res.status(400).send({error:'Invalid input'});
     }else{
         try {
             // create poll
-            let sql = `INSERT INTO polls (mail, poll) VALUES ('${mail}','${poll}');`;
+            let sql = `INSERT INTO polls (mail, poll, isActive) VALUES ('${mail}','${poll}','${active}');`;
             let rows = await promisePool.query(sql);
             let pollId = rows[0].insertId;
 
@@ -42,7 +43,7 @@ async function createPoll(req,res){
 function getPoll (req,res){
 
     const poll_id = req.params.poll_id;
-    let sql = `SELECT p.poll_id, p.mail, p.poll FROM polls as p WHERE p.poll_id='${poll_id}';`;
+    let sql = `SELECT p.poll_id, p.mail, p.poll, p.isActive FROM polls as p WHERE p.poll_id='${poll_id}';`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -75,12 +76,13 @@ async function updatePoll(req,res){
     const poll = req.body.poll || null;
     const answers = req.body.answers || [];
     const poll_id = req.body.poll_id || null;
+    const active = req.body.isActive;
 
     if(!poll_id||!poll||!answers){
         res.status(400).send({error:'Invalid input'});
     }else{
         try {
-            let sql = `UPDATE polls SET poll='${poll}' WHERE poll_id='${poll_id}';`;
+            let sql = `UPDATE polls SET poll='${poll}', isActive='${active}' WHERE poll_id='${poll_id}';`;
             let rows = await promisePool.query(sql);
             let updated = rows[0]?rows[0].affectedRows:false
             if(updated){
@@ -156,6 +158,25 @@ async function getAllPolls (req,res){
                 res.status(200).send(result);
             }else{
                 res.status(404).send({error:'polls could not be found'});
+            }
+        }
+    });
+}
+
+// get active poll
+async function getActivePoll (req,res){
+
+    const sql = `SELECT * FROM polls WHERE isActive=true;`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({error:'Error getting the poll'});
+        }else{
+            if(result[0]){
+                console.log("Result: ",result);
+                res.status(200).send(result);
+            }else{
+                res.status(404).send({error:'poll could not be found'});
             }
         }
     });
@@ -270,5 +291,6 @@ module.exports = {
     getAllPolls,
     vote,
     getUserVote,
-    getPollVotes
+    getPollVotes,
+    getActivePoll
 }

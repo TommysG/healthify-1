@@ -10,6 +10,7 @@ function route(app) {
     app.post('/api/pollVote', poll.vote); // vote in a poll
     app.post('/api/userVote', poll.getUserVote); // get user's vote in a poll
     app.get('/api/pollVotes/:poll_id', poll.getPollVotes); // vote in a poll
+    app.get('/api/activePoll', poll.getActivePoll); // vote in a poll
 }
 
 module.exports = route;
