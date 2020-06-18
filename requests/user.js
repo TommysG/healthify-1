@@ -54,7 +54,7 @@ const createUser = async (req,res)=>{
 const getUser = async (req,res)=>{
 
     const email = req.params.email;
-    const sql = `SELECT * FROM users WHERE email='${email}';`;
+    const sql = `SELECT email, username, name, surname, role, avatar FROM users WHERE email='${email}';`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -173,7 +173,7 @@ async function updateUser(req,res){
 // get all users' profiles
 async function getAllUsers(req,res){
 
-    const sql = `SELECT * FROM users;`;
+    const sql = `SELECT email, username, name, surname, role, avatar FROM users;`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);

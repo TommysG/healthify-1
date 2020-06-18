@@ -38,7 +38,9 @@ const getPost = async (req,res)=>{
 
     const post_id = req.params.post_id;
 
-    const sql = `SELECT * FROM posts WHERE post_id='${post_id}';`;
+    const sql = `SELECT p.post_id, p.user_id, p.title, p.body, p.createdAt, p.category, p.totalVotes, p.imgUrl, u.role, u.avatar
+     FROM posts p JOIN users u on p.user_id=u.email 
+     WHERE post_id='${post_id}';`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -113,7 +115,9 @@ const getAllUserPosts = (req,res)=>{
 
     const user_id = req.params.user_id || null;
 
-    const sql = `SELECT * FROM posts WHERE user_id='${user_id}' ORDER BY createdAt DESC;`;
+    const sql = `SELECT p.post_id, p.user_id, p.title, p.body, p.createdAt, p.category, p.totalVotes, p.imgUrl, u.role, u.avatar
+    FROM posts p JOIN users u on p.user_id=u.email 
+    WHERE p.user_id='${user_id}' ORDER BY p.createdAt DESC;`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -134,20 +138,15 @@ const getAllPostReplies = async (req,res)=>{
 
     const post_id = req.params.post_id;
 
-    const sql = `SELECT * FROM replies WHERE post_id='${post_id}' ORDER BY createdAt DESC;`;
+    const sql = `SELECT r.reply_id, r.user_id, r.post_id, r.comment, r.totalVotes, r.createdAt, u.role, u.avatar
+     FROM replies r JOIN users u ON r.user_id = u.email
+     WHERE r.post_id='${post_id}' ORDER BY r.createdAt DESC;`;
     const promisePool = pool.promise();
 
     try{
         let replies = await promisePool.query(sql);
         if(replies){
             replies = replies[0]
-            // let repliesFinal = [];
-            // for(let reply of replies){
-            //     let sql = `SELECT COUNT(*) as Count FROM replyvotes WHERE reply_id='${reply.reply_id}';`;
-            //     repliesVotes = await promisePool.query(sql);
-            //     reply.votes = repliesVotes[0][0].Count;
-            //     repliesFinal.push(reply)
-            // }
             res.status(200).send(replies)
         }else{
             res.status(404).send({error:`Post's replies could not be found`});
@@ -306,7 +305,9 @@ const getPostsCountPerCategory = async (req,res)=>{
 
 // get all posts with the number of replies each one has 
 const getPosts = async (req,res)=>{
-    let sql = `SELECT * FROM posts ORDER BY createdAt DESC`;
+    let sql = `SELECT p.post_id, p.user_id, p.title, p.body, p.createdAt, p.category, p.totalVotes, p.imgUrl, u.role, u.avatar
+    FROM posts p JOIN users u on p.user_id=u.email 
+    ORDER BY createdAt DESC`;
     const promisePool = pool.promise();
     try{
         let posts = await promisePool.query(sql);
@@ -333,7 +334,9 @@ const getPosts = async (req,res)=>{
 const getPostsPerCategory = async (req,res)=>{
     const category = await postCategoryByCode(req.params.category);
     const promisePool = pool.promise();
-    let sql = `SELECT * FROM posts WHERE category like '${category}%' ORDER BY createdAt DESC`;
+    let sql = `SELECT p.post_id, p.user_id, p.title, p.body, p.createdAt, p.category, p.totalVotes, p.imgUrl, u.role, u.avatar
+    FROM posts p JOIN users u on p.user_id=u.email 
+    WHERE category like '${category}%' ORDER BY createdAt DESC`;
 
     try{
         let posts = await promisePool.query(sql);

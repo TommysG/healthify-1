@@ -28,7 +28,9 @@ const createReply = async (req,res)=>{
 const getReply = async (req,res)=>{
 
     const reply_id = req.params.reply_id || null;
-    const sql = `SELECT * FROM replies WHERE reply_id='${reply_id}';`;
+    const sql = `SELECT r.reply_id, r.user_id, r.post_id, r.comment, r.totalVotes, r.createdAt, u.role, u.avatar
+    FROM replies r JOIN users u ON r.user_id = u.email 
+    WHERE reply_id='${reply_id}';`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
