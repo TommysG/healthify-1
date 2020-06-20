@@ -12,6 +12,7 @@ const createUser = async (req,res)=>{
     const surname = req.body.surname || null;
     const role = req.body.role || null;
     const avatar = req.body.avatar || null;
+    const mediaConnected = req.body.mediaConnected==true?1:0;
 
     // check if email or username already exist in the db 
     const existingMailUN = await checkExisting(email,username);
@@ -22,7 +23,7 @@ const createUser = async (req,res)=>{
         try {
             // validate structure of email, username, password, repeatPwd and role
             await userSchema.createUserSchema.validateAsync({ email,username, pwd, repeatPwd,role});
-            const sql = `INSERT INTO users VALUES ('${email}','${username}','${pwd}','${name}','${surname}','${role}','${avatar}');`;
+            const sql = `INSERT INTO users VALUES ('${email}','${username}','${pwd}','${name}','${surname}','${role}','${avatar}','${mediaConnected}');`;
             // make the query
             con.query(sql, (err, result) => {
                 if (err) {
@@ -54,7 +55,7 @@ const createUser = async (req,res)=>{
 const getUser = async (req,res)=>{
 
     const email = req.params.email;
-    const sql = `SELECT email, username, name, surname, role, avatar FROM users WHERE email='${email}';`;
+    const sql = `SELECT email, username, name, surname, role, avatar, mediaConnected FROM users WHERE email='${email}';`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -108,23 +109,27 @@ async function changePwd(req,res){
     if(rows[0][0]){
         const user = rows[0][0];
         // if given current password is valid
-        if(oldPwd==user.pwd){
-            // if new passwords match 
-            if(pwd==repeatPwd){
-                // update the user's existing password 
-                sql= `UPDATE users SET pwd='${pwd}' WHERE email='${email}';`;
-                rows = await promisePool.query(sql);
-                console.log('reply is :', rows)
-                if(rows[0].affectedRows>0){
-                    res.send('New password set successfully');
-                }else if(rows[0].affectedRows=0){
-                    res.status(500).send({error:'Error setting new password'});
+        if(user.mediaConnected){
+            res.status(403).send('User has been connected via media and cannot perform the current action')
+        }else{
+            if(oldPwd==user.pwd){
+                // if new passwords match 
+                if(pwd==repeatPwd){
+                    // update the user's existing password 
+                    sql= `UPDATE users SET pwd='${pwd}' WHERE email='${email}';`;
+                    rows = await promisePool.query(sql);
+                    console.log('reply is :', rows)
+                    if(rows[0].affectedRows>0){
+                        res.send('New password set successfully');
+                    }else if(rows[0].affectedRows=0){
+                        res.status(500).send({error:'Error setting new password'});
+                    }
+                }else{
+                    res.status(400).send({error:'New passwords do not match'});
                 }
             }else{
-                res.status(400).send({error:'New passwords do not match'});
+                res.status(400).send({error:'Invalid current password'});
             }
-        }else{
-            res.status(400).send({error:'Invalid current password'});
         }
     }else{
         res.status(400).send({error:'User could not be found'});
@@ -139,7 +144,6 @@ async function updateUser(req,res){
     const surname = req.body.surname || null;
     const role = req.body.role || null;
     const avatar = req.body.avatar || null;
-
     // check if another user with given username exist (username must be unique)
     const existingMailUN = await existingUsername(email,username);
     if(existingMailUN.flag){
@@ -148,7 +152,10 @@ async function updateUser(req,res){
         try {
             // validate user schema 
             await userSchema.updateUserSchema.validateAsync({username, role});
-            const sql = `UPDATE users SET username='${username}', name='${name}', surname='${surname}', role='${role}', avatar='${avatar}' WHERE email='${email}';`;
+            const sql = `UPDATE users 
+            SET username='${username}', name='${name}', surname='${surname}', role='${role}', avatar='${avatar}' 
+            WHERE email='${email}';`;
+            console.log(sql)
             // if no validation error run the query
             con.query(sql, (err, result) => {
                 if (err) {
@@ -173,7 +180,7 @@ async function updateUser(req,res){
 // get all users' profiles
 async function getAllUsers(req,res){
 
-    const sql = `SELECT email, username, name, surname, role, avatar FROM users;`;
+    const sql = `SELECT email, username, name, surname, role, avatar, mediaConnected FROM users;`;
     con.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -202,10 +209,14 @@ async function validatePwd(req,res){
     // if user is found check password validity
     if(rows[0][0]){
         let user = rows[0][0];
-        if(user.pwd==pwd){
-            res.send(user);
+        if(user.mediaConnected){
+            res.status(403).send('User has been connected via media and cannot perform the current action')
         }else{
-            res.status(403).send({error:'Invalid password'});
+            if(user.pwd==pwd){
+                res.send(user);
+            }else{
+                res.status(403).send({error:'Invalid password'});
+            }
         }
     }else{
         res.status(404).send({error:'User not found'});
