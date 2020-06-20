@@ -223,7 +223,7 @@ async function getUserVote(req,res){
         res.status(400).send('invalid input')
     }else{
         try {
-            let sql = `SELECT polls_votes_id as answer_id FROM polls_votes WHERE username='${username}' AND poll_id='${poll_id}';`;
+            let sql = `SELECT polls_answers_id as answer_id FROM polls_votes WHERE username='${username}' AND poll_id='${poll_id}';`;
             let rows = await promisePool.query(sql);
             let anser = rows[0][0];
             console.log(anser);
