@@ -110,7 +110,7 @@ async function changePwd(req,res){
         const user = rows[0][0];
         // if given current password is valid
         if(user.mediaConnected){
-            res.status(403).send('User has been connected via media and cannot perform the current action')
+            res.status(403).send({error:'User has been connected via media and cannot perform the current action'})
         }else{
             if(oldPwd==user.pwd){
                 // if new passwords match 
@@ -210,7 +210,7 @@ async function validatePwd(req,res){
     if(rows[0][0]){
         let user = rows[0][0];
         if(user.mediaConnected){
-            res.status(403).send('User has been connected via media and cannot perform the current action')
+            res.status(403).send({error:'User has been connected via media and cannot perform the current action'})
         }else{
             if(user.pwd==pwd){
                 res.send(user);
