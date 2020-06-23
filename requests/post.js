@@ -111,26 +111,28 @@ const updatePost= async (req,res)=>{
 }
 
 // get all posts made by a user
-const getAllUserPosts = (req,res)=>{
+const getAllUserPosts = async (req,res)=>{
 
     const user_id = req.params.user_id || null;
-
+    const promisePool = pool.promise();
     const sql = `SELECT p.post_id, p.user_id, p.title, p.body, p.createdAt, p.category, p.totalVotes, p.imgUrl, u.role, u.avatar
     FROM posts p JOIN users u on p.user_id=u.email 
     WHERE p.user_id='${user_id}' ORDER BY p.createdAt DESC;`;
-    con.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({error:`Error getting the user's posts`});
-        }else{
-            if(result[0]){
-                console.log("Result: ",result);
-                res.status(200).send(result);
-            }else{
-                res.status(404).send({error:`No User's posts were found`});
-            }
+    let posts = await promisePool.query(sql);
+    if (posts) {
+        posts = posts[0]
+        let postsFinal = [];
+        for(let post of posts){
+            let sql = `SELECT COUNT(*) as Count FROM replies WHERE post_id='${post.post_id}';`;
+            postReplies = await promisePool.query(sql);
+            post.repliesNum = postReplies[0][0].Count;
+            postsFinal.push(post)
         }
-    });
+        res.status(200).send(postsFinal);
+    }else{
+            res.status(404).send({error:`No User's posts were found`});
+        
+    }
 }
 
 // get all replies made on a certain post
