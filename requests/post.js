@@ -142,7 +142,7 @@ const getAllPostReplies = async (req,res)=>{
 
     const sql = `SELECT r.reply_id, r.user_id, r.post_id, r.comment, r.totalVotes, r.createdAt, u.role, u.avatar
      FROM replies r JOIN users u ON r.user_id = u.email
-     WHERE r.post_id='${post_id}';`;
+     WHERE r.post_id='${post_id}' ORDER BY r.createdAt ASC;`;
     const promisePool = pool.promise();
 
     try{
