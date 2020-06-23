@@ -9,12 +9,12 @@ const postSchema = Joi.object({
 
     title: Joi.string()
         .min(5)
-        .max(30)
+        .max(1000)
         .required(),
 
     body: Joi.string()
         .min(5)
-        .max(8000)
+        .max(20000)
         .required(),
 
     category: Joi.string()
